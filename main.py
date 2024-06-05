@@ -40,9 +40,9 @@ def NLP(Data):
         cmnt_words.append(word)
     cmnt_proc = " ".join(cmnt_words)
     labels = ['Negative', 'Neutral', 'Positive']
-    encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt')
+    encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt', max_length=512, padding='max_length', truncation=True)
     output = model(**encoded_cmnt)
-    scores = output[0][0].detach().numpy()
+    scores = output.logits.detach().numpy()[0]
     scores = softmax(scores)
     ret = 0
     scr = scores[0]
@@ -193,7 +193,7 @@ def main():
 
             # Display post media
             if post_media_url:
-                if post_media_url.is_video:
+                if post.is_video:
                     st.video(post_media_url)
                 else:
                     st.image(post_media_url)
