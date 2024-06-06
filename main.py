@@ -71,12 +71,13 @@ def NLP(Data):
 
 # Function to perform sentiment analysis and filtering
 def analyze_and_filter(url, start_time=None, end_time=None, username=None, sentiment=None):
-   reddit = praw.Reddit(
+    reddit = praw.Reddit(
         user_agent=True,
         client_id=st.secrets["reddit"]["client_id"],
         client_secret=st.secrets["reddit"]["client_secret"],
         username=st.secrets["reddit"]["username"],
-        password=st.secrets["reddit"]["password"])    
+        password=st.secrets["reddit"]["password"]
+    )
     post = reddit.submission(url=url)
 
     # Extract post details
@@ -89,10 +90,8 @@ def analyze_and_filter(url, start_time=None, end_time=None, username=None, senti
     # Check for media (images or videos)
     if hasattr(post, 'is_video') and post.is_video:
         post_media_url = post.media['reddit_video']['fallback_url']
-    elif hasattr(post, 'media_metadata') and post.media_metadata:
+    elif 'media_metadata' in post.__dict__ and post.media_metadata:
         post_media_url = list(post.media_metadata.values())[0]['s']['u']
-    elif hasattr(post, 'url') and post.url:
-        post_media_url = post.url
 
     # Initialize sentiment scores variables
     pv = 0
@@ -206,11 +205,13 @@ def main():
             st.write(f"**Date:** {post_date}")
             st.write(f"**Content:** {post_content}")
 
+            # Display post media
             if post_media_url:
-            	if post_media_url.endswith(('.mp4', '.gif')):
-                	st.video(post_media_url)
-            	else:
-                	st.image(post_media_url)
+                if post.is_video:
+                    st.video(post_media_url)
+                else:
+                    st.image(post_media_url)
+
             # Display progress bar first
             progress_bar = st.progress(0)
             progress_text = st.empty()
