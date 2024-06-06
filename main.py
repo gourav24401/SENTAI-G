@@ -213,16 +213,22 @@ def main():
             progress_text = st.empty()
             status_text = st.empty()
 
-            # Display results
-            st.success("Analysis completed! Results displayed below.")
+          # Display results
+st.success("Analysis completed! Results displayed below.")
 
-            # Display results using Streamlit components
-            st.write("Sentiment Distribution")
-            st.plotly_chart(pie_fig)
-            st.write("Sentiment Analysis")
-            st.plotly_chart(bar_fig)
-            st.write("Filtered Data")
-            st.write(df)
+# Display results using Streamlit components
+st.write("Sentiment Distribution")
+st.plotly_chart(pie_fig)
+st.write("Sentiment Analysis")
+st.plotly_chart(bar_fig)
+st.write("Filtered Data")
+st.write(df)
+
+# Download CSV button
+csv = df.to_csv(index=False)
+b64 = base64.b64encode(csv.encode()).decode()
+st.download_button(label="Download CSV File", data=csv, file_name='sentiment_analysis_results.csv', mime='text/csv')
+
 
 if __name__ == "__main__":
     main()
