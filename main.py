@@ -14,10 +14,8 @@ import matplotlib.pyplot as plt
 import pytz
 from googletrans import Translator
 import plotly.express as px
-import io
 import torch
 import base64
-
 
 # Initialize translator
 trans1 = Translator()
@@ -44,7 +42,7 @@ def NLP(Data):
     encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt', max_length=max_length, truncation=True, padding='max_length')
     input_ids = encoded_cmnt['input_ids']
     attention_mask = encoded_cmnt['attention_mask']
-    
+
     # Ensure the length of input_ids and attention_mask do not exceed max_length
     if input_ids.size(1) > max_length:
         input_ids = input_ids[:, :max_length]
@@ -52,7 +50,7 @@ def NLP(Data):
 
     # Generate position ids
     position_ids = torch.arange(0, input_ids.size(1), dtype=torch.long).unsqueeze(0)
-    
+
     output = model(input_ids=input_ids, attention_mask=attention_mask, position_ids=position_ids)
     scores = output[0][0].detach().numpy()
     scores = softmax(scores)
@@ -86,7 +84,7 @@ def analyze_and_filter(url, start_time=None, end_time=None, username=None, senti
     post_media_url = None
 
     # Check for media (images or videos)
-    if post.is_video:
+    if hasattr(post, 'is_video') and post.is_video:
         post_media_url = post.media['reddit_video']['fallback_url']
     elif 'media_metadata' in post.__dict__ and post.media_metadata:
         post_media_url = list(post.media_metadata.values())[0]['s']['u']
@@ -203,13 +201,12 @@ def main():
             st.write(f"**Date:** {post_date}")
             st.write(f"**Content:** {post_content}")
 
-                       # Display post media
+            # Display post media
             if post_media_url:
-                if "v.redd.it" in post_media_url:
+                if hasattr(post, 'is_video') and post.is_video:
                     st.video(post_media_url)
                 else:
                     st.image(post_media_url)
-
 
             # Display progress bar first
             progress_bar = st.progress(0)
@@ -235,4 +232,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
