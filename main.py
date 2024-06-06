@@ -86,8 +86,10 @@ def analyze_and_filter(url, start_time=None, end_time=None, username=None, senti
     # Check for media (images or videos)
     if hasattr(post, 'is_video') and post.is_video:
         post_media_url = post.media['reddit_video']['fallback_url']
-    elif 'media_metadata' in post.__dict__ and post.media_metadata:
+    elif hasattr(post, 'media_metadata') and post.media_metadata:
         post_media_url = list(post.media_metadata.values())[0]['s']['u']
+    elif hasattr(post, 'url') and post.url:
+        post_media_url = post.url
 
     # Initialize sentiment scores variables
     pv = 0
@@ -203,7 +205,7 @@ def main():
 
             # Display post media
             if post_media_url:
-                if hasattr(post, 'is_video') and post.is_video:
+                if post_media_url.endswith(('.mp4', '.gif')):
                     st.video(post_media_url)
                 else:
                     st.image(post_media_url)
@@ -227,8 +229,3 @@ def main():
             # CSV download option
             csv = df.to_csv(index=False)
             b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-            href = f'<a href="data:file/csv;base64,{b64}" download="reddit_comments.csv">Download CSV file</a>'
-            st.markdown(href, unsafe_allow_html=True)
-
-if __name__ == "__main__":
-    main()
