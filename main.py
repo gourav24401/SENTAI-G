@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import pytz
 from googletrans import Translator
 import plotly.express as px
+import torch
+
 
 # Initialize translator
 trans1 = Translator()
