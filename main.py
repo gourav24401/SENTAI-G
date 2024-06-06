@@ -205,7 +205,7 @@ def main():
 
             # Display post media
             if post_media_url:
-                if post_media_url.endswith(('.mp4', '.gif')):
+                if post.is_video:
                     st.video(post_media_url)
                 else:
                     st.image(post_media_url)
