@@ -1,3 +1,9 @@
+import warnings
+
+# Suppress specific warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub.file_download")
+warnings.filterwarnings("ignore", category=UserWarning, module="transformers.utils.generic")
+
 import streamlit as st  # For Streamlit UI components
 from datetime import datetime  # For handling dates and times
 import praw  # For interacting with Reddit API
@@ -17,6 +23,7 @@ trans1 = Translator()
 try:
     import torch
     from transformers import AutoModelForSequenceClassification
+    torch.utils._pytree.register_pytree_node = torch.utils._pytree._register_pytree_node
     torch_available = True
 except ImportError:
     torch_available = False
@@ -40,9 +47,9 @@ def NLP(Data):
         cmnt_words.append(word)
     cmnt_proc = " ".join(cmnt_words)
     labels = ['Negative', 'Neutral', 'Positive']
-    encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt', max_length=512, padding='max_length', truncation=True)
+    encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt')
     output = model(**encoded_cmnt)
-    scores = output.logits.detach().numpy()[0]
+    scores = output[0][0].detach().numpy()
     scores = softmax(scores)
     ret = 0
     scr = scores[0]
@@ -193,20 +200,13 @@ def main():
 
             # Display post media
             if post_media_url:
-                if post_media_url.is_video:
+                if post.is_video:
                     st.video(post_media_url)
                 else:
                     st.image(post_media_url)
 
-            # Display progress bar first
-            progress_bar = st.progress(0)
-            progress_text = st.empty()
-            status_text = st.empty()
-
             # Display results
             st.success("Analysis completed! Results displayed below.")
-
-            # Display results using Streamlit components
             st.write("Sentiment Distribution")
             st.plotly_chart(pie_fig)
             st.write("Sentiment Analysis")
