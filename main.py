@@ -1,9 +1,3 @@
-import warnings
-
-# Suppress specific warnings
-warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub.file_download")
-warnings.filterwarnings("ignore", category=UserWarning, module="transformers.utils.generic")
-
 import streamlit as st
 from datetime import datetime
 import praw
@@ -14,8 +8,7 @@ import matplotlib.pyplot as plt
 import pytz
 from googletrans import Translator
 import plotly.express as px
-import torch
-
+import io
 
 # Initialize translator
 trans1 = Translator()
@@ -213,22 +206,22 @@ def main():
             progress_text = st.empty()
             status_text = st.empty()
 
-          # Display results
-st.success("Analysis completed! Results displayed below.")
+            # Display results
+            st.success("Analysis completed! Results displayed below.")
 
-# Display results using Streamlit components
-st.write("Sentiment Distribution")
-st.plotly_chart(pie_fig)
-st.write("Sentiment Analysis")
-st.plotly_chart(bar_fig)
-st.write("Filtered Data")
-st.write(df)
+            # Display results using Streamlit components
+            st.write("Sentiment Distribution")
+            st.plotly_chart(pie_fig)
+            st.write("Sentiment Analysis")
+            st.plotly_chart(bar_fig)
+            st.write("Filtered Data")
+            st.write(df)
 
-# Download CSV button
-csv = df.to_csv(index=False)
-b64 = base64.b64encode(csv.encode()).decode()
-st.download_button(label="Download CSV File", data=csv, file_name='sentiment_analysis_results.csv', mime='text/csv')
-
+            # CSV download option
+            csv = df.to_csv(index=False)
+            b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+            href = f'<a href="data:file/csv;base64,{b64}" download="reddit_comments.csv">Download CSV file</a>'
+            st.markdown(href, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
