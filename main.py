@@ -23,7 +23,6 @@ trans1 = Translator()
 try:
     import torch
     from transformers import AutoModelForSequenceClassification
-    torch.utils._pytree.register_pytree_node = torch.utils._pytree._register_pytree_node
     torch_available = True
 except ImportError:
     torch_available = False
@@ -33,6 +32,7 @@ if torch_available:
     roberta = "cardiffnlp/twitter-roberta-base-sentiment"
     model = AutoModelForSequenceClassification.from_pretrained(roberta)
     tokenizer = AutoTokenizer.from_pretrained(roberta)
+    max_length = model.config.max_position_embeddings  # Set the max sequence length from the model config
 
 # Function for sentiment analysis
 def NLP(Data):
@@ -47,7 +47,7 @@ def NLP(Data):
         cmnt_words.append(word)
     cmnt_proc = " ".join(cmnt_words)
     labels = ['Negative', 'Neutral', 'Positive']
-    encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt')
+    encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt', max_length=max_length, truncation=True, padding='max_length')
     output = model(**encoded_cmnt)
     scores = output[0][0].detach().numpy()
     scores = softmax(scores)
@@ -205,8 +205,15 @@ def main():
                 else:
                     st.image(post_media_url)
 
+            # Display progress bar first
+            progress_bar = st.progress(0)
+            progress_text = st.empty()
+            status_text = st.empty()
+
             # Display results
             st.success("Analysis completed! Results displayed below.")
+
+            # Display results using Streamlit components
             st.write("Sentiment Distribution")
             st.plotly_chart(pie_fig)
             st.write("Sentiment Analysis")
