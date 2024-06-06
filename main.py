@@ -5,7 +5,6 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hu
 warnings.filterwarnings("ignore", category=UserWarning, module="transformers.utils.generic")
 
 import streamlit as st
-import streamlit as st
 from datetime import datetime
 import praw
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -47,7 +46,10 @@ def NLP(Data):
         input_ids = input_ids[:, :max_length]
         attention_mask = attention_mask[:, :max_length]
 
-    output = model(input_ids=input_ids, attention_mask=attention_mask)
+    # Generate position ids
+    position_ids = torch.arange(0, input_ids.size(1), dtype=torch.long).unsqueeze(0)
+    
+    output = model(input_ids=input_ids, attention_mask=attention_mask, position_ids=position_ids)
     scores = output[0][0].detach().numpy()
     scores = softmax(scores)
     ret = 0
