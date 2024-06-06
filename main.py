@@ -229,3 +229,8 @@ def main():
             # CSV download option
             csv = df.to_csv(index=False)
             b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+            href = f'<a href="data:file/csv;base64,{b64}" download="reddit_comments.csv">Download CSV file</a>'
+            st.markdown(href, unsafe_allow_html=True)
+
+if __name__ == "__main__":
+    main()
