@@ -205,7 +205,7 @@ def main():
 
             # Display post media
             if post_media_url:
-                if post.is_video:
+                if post_media_url.is_video:
                     st.video(post_media_url)
                 else:
                     st.image(post_media_url)
