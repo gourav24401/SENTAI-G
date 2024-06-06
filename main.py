@@ -205,12 +205,12 @@ def main():
             st.write(f"**Date:** {post_date}")
             st.write(f"**Content:** {post_content}")
   	
-            # Display post media
-        	if post_media_url:
-            	if "v.redd.it" in post_media_url:
-                	st.video(post_media_url)
-            	else:
-                	st.image(post_media_url)
+              # Display post media
+            if post_media_url:
+                if post_media_url.endswith(('.mp4', '.gif')):
+                    st.video(post_media_url)
+                else:
+                    st.image(post_media_url)
 
 
             # Display progress bar first
