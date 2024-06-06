@@ -1,3 +1,9 @@
+import warnings
+
+# Suppress specific warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub.file_download")
+warnings.filterwarnings("ignore", category=UserWarning, module="transformers.utils.generic")
+
 import streamlit as st
 from datetime import datetime
 import praw
