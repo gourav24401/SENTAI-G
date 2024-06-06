@@ -4,35 +4,25 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub.file_download")
 warnings.filterwarnings("ignore", category=UserWarning, module="transformers.utils.generic")
 
-import streamlit as st  # For Streamlit UI components
-from datetime import datetime  # For handling dates and times
-import praw  # For interacting with Reddit API
-from transformers import AutoTokenizer, AutoModelForSequenceClassification  # For NLP model and tokenizer
-from scipy.special import softmax  # For computing softmax probabilities
-import pandas as pd  # For handling data in DataFrames
-import matplotlib.pyplot as plt  # For plotting with Matplotlib
-import pytz  # For handling timezone conversions
-from googletrans import Translator  # For translating text
-import plotly.express as px  # For creating interactive plots with Plotly
+import streamlit as st
+from datetime import datetime
+import praw
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from scipy.special import softmax
+import pandas as pd
+import matplotlib.pyplot as plt
+import pytz
+from googletrans import Translator
+import plotly.express as px
 
 # Initialize translator
 trans1 = Translator()
 
 # Initialize sentiment analysis model and tokenizer
-# Check if PyTorch is available
-try:
-    import torch
-    from transformers import AutoModelForSequenceClassification
-    torch_available = True
-except ImportError:
-    torch_available = False
-
-if torch_available:
-    # Initialize sentiment analysis model and tokenizer
-    roberta = "cardiffnlp/twitter-roberta-base-sentiment"
-    model = AutoModelForSequenceClassification.from_pretrained(roberta)
-    tokenizer = AutoTokenizer.from_pretrained(roberta)
-    max_length = model.config.max_position_embeddings  # Set the max sequence length from the model config
+roberta = "cardiffnlp/twitter-roberta-base-sentiment"
+model = AutoModelForSequenceClassification.from_pretrained(roberta)
+tokenizer = AutoTokenizer.from_pretrained(roberta)
+max_length = model.config.max_position_embeddings  # Set the max sequence length from the model config
 
 # Function for sentiment analysis
 def NLP(Data):
