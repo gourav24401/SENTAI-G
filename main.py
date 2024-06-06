@@ -5,6 +5,7 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hu
 warnings.filterwarnings("ignore", category=UserWarning, module="transformers.utils.generic")
 
 import streamlit as st
+import streamlit as st
 from datetime import datetime
 import praw
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -38,7 +39,15 @@ def NLP(Data):
     cmnt_proc = " ".join(cmnt_words)
     labels = ['Negative', 'Neutral', 'Positive']
     encoded_cmnt = tokenizer(cmnt_proc, return_tensors='pt', max_length=max_length, truncation=True, padding='max_length')
-    output = model(**encoded_cmnt)
+    input_ids = encoded_cmnt['input_ids']
+    attention_mask = encoded_cmnt['attention_mask']
+    
+    # Ensure the length of input_ids and attention_mask do not exceed max_length
+    if input_ids.size(1) > max_length:
+        input_ids = input_ids[:, :max_length]
+        attention_mask = attention_mask[:, :max_length]
+
+    output = model(input_ids=input_ids, attention_mask=attention_mask)
     scores = output[0][0].detach().numpy()
     scores = softmax(scores)
     ret = 0
@@ -213,3 +222,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
