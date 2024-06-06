@@ -16,6 +16,8 @@ from googletrans import Translator
 import plotly.express as px
 import io
 import torch
+import base64
+
 
 # Initialize translator
 trans1 = Translator()
