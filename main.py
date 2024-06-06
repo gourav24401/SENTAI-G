@@ -203,13 +203,11 @@ def main():
             st.write(f"**Date:** {post_date}")
             st.write(f"**Content:** {post_content}")
 
-            # Display post media
             if post_media_url:
-                if post.is_video:
-                    st.video(post_media_url)
-                else:
-                    st.image(post_media_url)
-
+            	if post_media_url.endswith(('.mp4', '.gif')):
+                	st.video(post_media_url)
+            	else:
+                	st.image(post_media_url)
             # Display progress bar first
             progress_bar = st.progress(0)
             progress_text = st.empty()
