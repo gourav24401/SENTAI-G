@@ -204,13 +204,14 @@ def main():
             st.write(f"**Author:** {post_author}")
             st.write(f"**Date:** {post_date}")
             st.write(f"**Content:** {post_content}")
-
+  	
             # Display post media
-            if post_media_url:
-                if post.is_video:
-                    st.video(post_media_url)
-                else:
-                    st.image(post_media_url)
+        	if post_media_url:
+            	if "v.redd.it" in post_media_url:
+                	st.video(post_media_url)
+            	else:
+                	st.image(post_media_url)
+
 
             # Display progress bar first
             progress_bar = st.progress(0)
