@@ -71,9 +71,12 @@ def NLP(Data):
 
 # Function to perform sentiment analysis and filtering
 def analyze_and_filter(url, start_time=None, end_time=None, username=None, sentiment=None):
-    reddit = praw.Reddit(user_agent=True, client_id="7Ek3_8aZPCjzJXKDb-friA",
-                         client_secret="uS73HotWy3FT9-oOtiSVIfzwfhFeLQ",
-                         username="leather_Trainer2234", password="Deevanshu@2009")
+   reddit = praw.Reddit(
+        user_agent=True,
+        client_id=st.secrets["reddit"]["client_id"],
+        client_secret=st.secrets["reddit"]["client_secret"],
+        username=st.secrets["reddit"]["username"],
+        password=st.secrets["reddit"]["password"])    
     post = reddit.submission(url=url)
 
     # Extract post details
